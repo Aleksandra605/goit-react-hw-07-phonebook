@@ -4,8 +4,9 @@ import PropTypes from 'prop-types';
 import s from './form-styles.module.css';
 import { connect } from 'react-redux';
 import * as contactsOperations from '../../redux/contacts-operations';
+import { getAllContacts } from '../../redux/contacts-selectors';
 
-function Form({ toAddContact }) {
+function Form({ contacts, toAddContact }) {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -20,6 +21,10 @@ function Form({ toAddContact }) {
   const handleSubmit = event => {
     event.preventDefault();
     const data = { name: name, number: number, id: shortid.generate() };
+
+    if (contacts.find(contact => contact.name === name)) {
+      return alert(`This person ${name} is already in contacts`);
+    }
     toAddContact(data);
     setName('');
     setNumber('');
@@ -60,10 +65,16 @@ Form.propTypes = {
   onSubmit: PropTypes.func,
 };
 
+const mapStateToProps = state => {
+  return {
+    contacts: getAllContacts(state),
+  };
+};
+
 const mapDispatchToProps = dispatch => {
   return {
     toAddContact: data => dispatch(contactsOperations.addContact(data)),
   };
 };
 
-export default connect(null, mapDispatchToProps)(Form);
+export default connect(mapStateToProps, mapDispatchToProps)(Form);

@@ -15,14 +15,7 @@ import {
 
 const items = createReducer([], {
   [featchContactSuccess]: (state, { payload }) => payload,
-  [addContactSuccess]: (state, action) => {
-    let similar = state.find(item => item.name === action.payload.name);
-
-    if (similar !== undefined) {
-      alert(`${action.payload.name} is already in contacts.`);
-      return state;
-    } else return [...state, action.payload];
-  },
+  [addContactSuccess]: (state, action) => [...state, action.payload],
   [deleteContactSuccess]: (state, action) =>
     state.filter(contact => contact.id !== action.payload),
 });
